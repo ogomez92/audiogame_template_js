@@ -3,8 +3,8 @@ class GameUtils {
 progressPan(current, max) {
 return ((current*200/max)-100)/100;
 }
-progressPitch(current,max) {
-return ((current*200/max))/100;
+progressPitch(current,min,max,minPitch,maxPitch) {
+return (current/(min+max))*(maxPitch-minPitch)+minPitch;
 }
 	distance3D(x1, y1, z1, x2, y2, z2) {
 		return Math.sqrt((x2 - x1) * (x2 - x1) +

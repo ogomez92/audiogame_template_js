@@ -1,21 +1,22 @@
 'use strict';
+import {lang} from './main';
 import {utils} from './utilities';
-import {strings} from './strings';
 import {speech} from './tts';
 import $ from 'jquery';
-import {son} from './sonoObject.js';
+import {so} from './soundObject.js';
 import {MenuTypes, MenuItem} from './menuItem';
 import {KeyEvent} from './keycodes';
 import {KeyboardInput} from './input';
 
 class Menu {
-	constructor(name, menuData, music) {
+	constructor(name, menuData, isAudio=false,music) {
 		this.menuData = menuData;
+		this.isAudio=isAudio;
 		this.first=true;
 		this.cursor = 0;
 		this.name = name;
 		let dir=so.directory;
-		son.directory="./sounds/";
+		so.directory="./sounds/";
 		this.sndKeyChar = so.create('ui/keyChar');
 		this.sndKeyDelete = so.create('ui/keyDelete');
 		this.sndSliderLeft = so.create('ui/menuSliderLeft');
@@ -31,7 +32,7 @@ class Menu {
 		if (typeof music !== 'undefined') {
 			this.music = music;
 		}
-		const id = document.getElementById('touchArea');
+		//const id = document.getElementById('touchArea');
 		// This.hammer = new Hammer(id);
 	}
 
@@ -50,7 +51,13 @@ class Menu {
 				this.sndMove.play();
 				this.first=false;
 		}
-		
+if (this.isAudio) {
+this.sndName.stop();
+for (let i=0;i<this.menuData.length;i++) {
+console.log(this.menuData[i].name);
+if (this.menuData[i].type==MenuTypes.AUDIO) this.menuData[i].snd.stop();
+}
+}		
 		this.menuData[this.cursor].speak();
 	}
 
@@ -68,6 +75,12 @@ class Menu {
 		this.sndWrap.play();
 					
 		}
+		if (this.isAudio) {
+		this.sndName.stop();
+for (let i in this.menuData) {
+if (this.menuData[i].type==MenuTypes.AUDIO) this.menuData[i].snd.stop();
+}
+}		
 				this.menuData[this.cursor].speak();
 	}
 
@@ -112,18 +125,22 @@ class Menu {
 	}
 
 	destroySounds() {
-		this.sndKeyChar.unload();
-		this.sndKeyDelete.unload();
-		this.sndSliderLeft.unload();
-		this.sndSliderRight.unload();
-		this.sndBoundary.unload();
-		this.sndChoose.unload();
-		this.sndMove.unload();
-		this.sndOpen.unload();
-		this.sndSelector.unload();
-		this.sndWrap.unload();
+		this.sndKeyChar.destroy();
+		this.sndKeyDelete.destroy();
+		this.sndSliderLeft.destroy();
+		this.sndSliderRight.destroy();
+		this.sndName.destroy();
+		this.sndBoundary.destroy();
+		this.sndChoose.destroy();
+		this.sndMove.destroy();
+		this.sndOpen.destroy();
+		this.sndSelector.destroy();
+		this.sndWrap.destroy();
+		for (let i=0;i<this.menuData.length;i++) {
+				if (this.menuData[i].type==MenuTypes.AUDIO) this.menuData[i].snd.destroy();
+		}
 		if (typeof this.music !== 'undefined') {
-this.music.unload();
+this.music.destroy();
 		}
 	}
 
@@ -132,7 +149,7 @@ this.music.unload();
 			this.music.volume = i;
 			await utils.sleep(50);
 		}
-		this.music.unload();
+		this.music.destroy();
 		//this.destroy();
 	}
 
@@ -187,7 +204,7 @@ destroy() {
 			this.music.loop = true;
 	this.music.play();
 		} else if (typeof this.music === 'string') {
-					this.music = son.create(this.music,true);
+					this.music = so.create(this.music,true);
 			this.music.volume = 0.5;
 			this.music.loop = true;
 	this.music.play();
@@ -208,7 +225,13 @@ destroy() {
 		this.hammer.on("pandown", function(event) { that.handleSwipe(4); });
 		this.hammer.on("tap", function(event) { that.handleSwipe(2); });
 		*/
-		speech.speak(this.name);
+		if (this.isAudio) {
+this.sndName=so.create(this.name+lang);
+this.sndName.play();
+}
+else {
+speech.speak(this.name);
+}
 		this.sndOpen.play();
 	}
 
