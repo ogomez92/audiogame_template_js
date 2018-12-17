@@ -1,154 +1,170 @@
-import {Howl, Howler,Spatial} from 'howler';
+import {Howl, Howler, Spatial} from './howler';
 import {KeyboardInput} from './input';
 import {KeyEvent} from './keycodes';
 import {utils} from './utilities';
+
 const isElectron = true;
 let playOnceTimer;
 class SoundObjectItem {
-	constructor(file, callback = 0, tag = 0,stream=false) {
+	constructor(file, callback = 0, tag = 0, stream = false) {
 		const that = this;
 		this.fileName = file;
 		this.sound = new Howl({
-			src: file,
-			html5:stream,
-			onload() {
- that.doneLoading();
-			}
-		});
-		this.timeout = setTimeout(() => {
- that.checkProgress();
-		}, 2000);
-		this.loaded = false;
-		this.callback = callback;
-		this.timeToLoad = performance.now();
-		this.tag = tag;
-	}
-
-	checkProgress() {
-		if (this.sound.state() == 'loaded') {
-			this.doneLoading();
-		} else {
-			const that = this;
-			this.timeout = setTimeout(() => {
- that.checkProgress();
-			}, 500);
-		}
-	}
-
-	doneLoading() {
-			clearTimeout(this.timeout);
-			this.loaded = true;
-			if (this.callback != 0) {
-			this.callback();
-			}
-	}
-
-	play() {
-		this.sound.play();
-	}
-	
-playSync() {
-let inp=new KeyboardInput();
-inp.init();
- this.sound.play();
- inp.justPressedEventCallback=((evt)=> {
- if (evt==KeyEvent.DOM_VK_Q || evt==KeyEvent.DOM_VK_X) {
- this.sound.stop();
- inp.justPressedEventCallback=null;
- }
- });
- return new Promise((resolve,reject)=>{
- this.sound.once("end",()=> {
- this.sound.unload();
-   resolve("ok");
-   inp.justPressedEventCallback=null;
- });//end
-  this.sound.once("stop",()=> {
- this.sound.unload();
-  resolve("ok");
-  inp.justPressedEventCallback=null;
- });//stop
- });//promise
-	}
-	stop() {
-		this.sound.stop();
-	}
-
-	pause() {
-		this.sound.pause();
-	}
-
-	destroy() {
-					this.sound.unload();
-	}
-
-	unload() {
-		this.sound.unload();
-	}
-
-	get volume() {
-		return this.sound.volume();
-	}
-
-	set volume(v) {
-			return this.sound.volume(v);
-	}
-get pan() {
-		return this.sound.stereo();
-	}
-
-	set pan(v) {
-		return this.sound.stereo(v);
-	}
-
-	set loop(v) {
-		return this.sound.loop(v);
-	}
-get active() {
-if (this.sound.state()=="unloaded") return false;
-if (this.sound.state()=="loaded") return true;
-if (this.sound.state()=="loading") return true;
+src: file,
+html5: stream,
+onload() {
+that.doneLoading();
 }
-	get loop() {
-		return this.sound.loop();
-	}
-	get playing() {
-		return this.sound.playing();
-	}
-	get playbackRate() {
-		return this.sound.rate();
-	}
+});
+this.timeout = setTimeout(() => {
+		that.checkProgress();
+		}, 2000);
+this.loaded = false;
+this.callback = callback;
+this.timeToLoad = performance.now();
+this.tag = tag;
+}
 
-	set playbackRate(v) {
-		return this.sound.rate(v);
+checkProgress() {
+	if (this.sound.state() == 'loaded') {
+		this.doneLoading();
+	} else {
+		const that = this;
+		this.timeout = setTimeout(() => {
+				that.checkProgress();
+				}, 500);
 	}
+}
+
+doneLoading() {
+	clearTimeout(this.timeout);
+	this.loaded = true;
+	if (this.callback != 0) {
+		this.callback();
+	}
+}
+
+play() {
+	this.sound.play();
+}
+splay() {
+	this.sound.stop();
+	this.sound.play();
+}
+
+playSync() {
+	const inp = new KeyboardInput();
+	inp.init();
+	this.sound.play();
+	inp.justPressedEventCallback = (evt => {
+			if (evt == KeyEvent.DOM_VK_Q || evt == KeyEvent.DOM_VK_X) {
+			this.sound.stop();
+			inp.justPressedEventCallback = null;
+			}
+			});
+	return new Promise(resolve => {
+			this.sound.once('end', () => {
+					resolve('ok');
+					inp.justPressedEventCallback = null;
+					});// End
+			this.sound.once('stop', () => {
+					resolve('ok');
+					inp.justPressedEventCallback = null;
+					});// Stop
+			});// Promise
+}
+
+stop() {
+	this.sound.stop();
+}
+
+pause() {
+	this.sound.pause();
+}
+
+destroy() {
+	this.sound.unload();
+}
+
+unload() {
+	this.sound.unload();
+}
+
+get volume() {
+	return this.sound.volume();
+}
+
+set volume(v) {
+	return this.sound.volume(v);
+}
+
+get pan() {
+	return this.sound.stereo();
+}
+
+set pan(v) {
+	return this.sound.stereo(v);
+}
+
+set loop(v) {
+	return this.sound.loop(v);
+}
+
+get active() {
+	if (this.sound.state() == 'unloaded') {
+		return false;
+	}
+	if (this.sound.state() == 'loaded') {
+		return true;
+	}
+	if (this.sound.state() == 'loading') {
+		return true;
+	}
+}
+
+get loop() {
+	return this.sound.loop();
+}
+
+get playing() {
+	return this.sound.playing();
+}
+
+get playbackRate() {
+	return this.sound.rate();
+}
+
+set playbackRate(v) {
+	return this.sound.rate(v);
+}
+
 get pitch() {
-		return this.sound.rate();
-	}
+	return this.sound.rate();
+}
 
-	set pitch(v) {
-		return this.sound.rate(v);
-	}
+set pitch(v) {
+	return this.sound.rate(v);
+}
 
-	get currentTime() {
-		return this.sound.seek();
-	}
+get currentTime() {
+	return this.sound.seek();
+}
 
-	get duration() {
-		return this.sound.duration()*1000;
-	}
+get duration() {
+	return this.sound.duration() * 1000;
+}
 
-	get position() {
-		return this.sound.seek();
-	}
+get position() {
+	return this.sound.seek();
+}
 
-	set currentTime(v) {
-		return this.sound.seek(v);
-	}
+set currentTime(v) {
+	return this.sound.seek(v);
+}
 
-	seek(time) {
-		return this.sound.seek(time);
-	}
+seek(time) {
+	return this.sound.seek(time);
+}
 }
 class SoundObject {
 	constructor() {
@@ -201,7 +217,7 @@ class SoundObject {
 		for (let i = 0; i < this.sounds.length; i++) {
 			if (typeof this.sounds[i] !== 'undefined') {
 				if (this.sounds[i].tag == 1) {
-									this.sounds[i].sound.unload();
+					this.sounds[i].sound.unload();
 					this.sounds.splice(i, 1);
 				}
 			}
@@ -217,16 +233,21 @@ class SoundObject {
 		this.statusCallback = null;
 	}
 
-	create(file,stream=false) {
+	create(file, stream = false) {
 		file = this.directory + file + this.extension;
 		let returnObject = null;
 		const that = this;
-		returnObject = new SoundObjectItem(file, (() => {
- that.doneLoading();
-		}),0,stream);
-										this.sounds.push(returnObject);
-								return returnObject;
+		try {
+			returnObject = new SoundObjectItem(file, (() => {
+						that.doneLoading();
+						}), 0, stream);
+			this.sounds.push(returnObject);
+		} catch(err) {
+			console.log("Error loading sound: "+err.message);
+		}
+		return returnObject;
 	}
+
 	enqueue(file) {
 		file = this.directory + file + this.extension;
 		console.log(file);
@@ -235,8 +256,8 @@ class SoundObject {
 	}
 
 	loadQueue() {
-			this.handleQueue();
-			this.loadingQueue = true;
+		this.handleQueue();
+		this.loadingQueue = true;
 	}
 
 	setQueueCallback(callback) {
@@ -261,21 +282,19 @@ class SoundObject {
 			}
 			console.log(this.queue[0]);
 			try {
-			this.sounds.push(new SoundObjectItem(this.queue[0], (() => {
- that.handleQueue();
-			}), 1));
-			}
-			catch(err) {
-				console.log("error");
-			}
-			finally {
-			this.queue.splice(0, 1);
+				this.sounds.push(new SoundObjectItem(this.queue[0], (() => {
+								that.handleQueue();
+								}), 1));
+			} catch (err) {
+				console.log('error');
+			} finally {
+				this.queue.splice(0, 1);
 			}
 		} else {
 			this.loadingQueue = false;
-								if (typeof this.queueCallback !== 'undefined' && this.queueCallback != 0) {
-					this.queueCallback();
-				}
+			if (typeof this.queueCallback !== 'undefined' && this.queueCallback != 0) {
+				this.queueCallback();
+			}
 		}
 	}
 
@@ -318,18 +337,18 @@ class SoundObject {
 		const toDestroy = new Array();
 		const that = this;
 		this.oneShotSound.on('ended', () => {
-			for (var i = 0; i < that.oneShots.length; i++) {
+				for (var i = 0; i < that.oneShots.length; i++) {
 				if (that.oneShots[i].playing == false) {
-that.oneShots[i].unload();
-toDestroy.push(i);
+				that.oneShots[i].unload();
+				toDestroy.push(i);
 				}
-			}
-			for (var i = 0; i < toDestroy.length; i++) {
+				}
+				for (var i = 0; i < toDestroy.length; i++) {
 				if (that.oneShotSounds[i].playing == false) {
 				that.oneShotSounds.splice(toDestroy[i], 1);
-													}
-			}
-		 });
+				}
+				}
+				});
 	}
 
 	destroy(file, callback = 0) {
@@ -337,26 +356,26 @@ toDestroy.push(i);
 		const filename = this.directory + file + this.extension;
 		while (!noMore) {
 			const found = this.findSoundIndex(filename);
-														if (found == -1) {
-								noMore = true;
-							} else {
-											this.sounds[found].sound.unload();
-																							this.sounds.splice(found, 1);
-																			}
+			if (found == -1) {
+				noMore = true;
+			} else {
+				this.sounds[found].sound.unload();
+				this.sounds.splice(found, 1);
+			}
 		}
 		if (callback != 0) {
-callback();
+			callback();
 		}
 	}
 
 	kill(callback = 0) {
 		while (this.sounds.length > 0) {
-					this.sounds.splice(0, 1);
+			this.sounds.splice(0, 1);
 		}
-				Howler.unload();
-				if (callback != 0) {
-callback();
-				}
+		Howler.unload();
+		if (callback != 0) {
+			callback();
+		}
 	}
 }
 const so = new SoundObject();

@@ -10,16 +10,16 @@ function Timer(callbacks, step) {
 		if (last !== null) {
 			acc += (time - last) / 1000;
 			while (acc > inc) {
-        callbacks.update(inc, tick);
-        tick += 1;
-        acc -= inc;
+				callbacks.update(inc, tick);
+				tick += 1;
+				acc -= inc;
 			}
 		}
 		last = time;
-    callbacks.render();
-    if (active) {
-    	frameId = requestAnimationFrame(onFrame);
-    }
+		callbacks.render();
+		if (active) {
+			frameId = requestAnimationFrame(onFrame);
+		}
 	}
 
 	function start() {
@@ -30,20 +30,19 @@ function Timer(callbacks, step) {
 
 	function stop() {
 		active = false;
-    cancelAnimationFrame(frameId);
-    console.log(frameId);
+		cancelAnimationFrame(frameId);
 	}
 	function change(value) {
-		inc = value || 1 / 120;
+		inc = value || 1 / 60;
 		acc = inc;
 		tick = 0;
-  stop();
-  start();
+		stop();
+		start();
 	}
 	return {
 		start,
-		stop,
-		change
+			stop,
+			change
 	};
 }
 

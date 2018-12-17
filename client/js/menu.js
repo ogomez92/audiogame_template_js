@@ -54,7 +54,6 @@ class Menu {
 if (this.isAudio) {
 this.sndName.stop();
 for (let i=0;i<this.menuData.length;i++) {
-console.log(this.menuData[i].name);
 if (this.menuData[i].type==MenuTypes.AUDIO) this.menuData[i].snd.stop();
 }
 }		

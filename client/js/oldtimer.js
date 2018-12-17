@@ -30,7 +30,8 @@ class OldTimer {
 		this.paused = false;
 		this.started = true;
 	}
-restart() {
+
+	restart() {
 		this.lastTime = performance.now();
 		this.pauseWhen = 0;
 		this.paused = false;

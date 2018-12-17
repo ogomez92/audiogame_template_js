@@ -1,11 +1,13 @@
 'use strict';
+import {lang} from './main';
 import {speech} from './tts';
-
+import {so} from './soundObject';
 const MenuTypes = {
 	NORMAL: 0,
 	SELECTOR: 1,
 	SLIDER: 2,
-	EDIT: 3
+	EDIT: 3,
+	AUDIO: 4,
 };
 class MenuItem {
 	constructor(id, name) {
@@ -22,6 +24,24 @@ class MenuItem {
 		return this.id;
 	}
 }
+class AudioItem extends MenuItem{
+	constructor(id, name) {
+	super();
+		this.name = name;
+				this.type = MenuTypes.AUDIO;
+				this.id = id;
+				this.snd=so.create(this.name+lang);
+	}
+
+	speak() {
+		this.snd.play();
+	}
+
+	select() {
+		return this.id;
+	}
+}
+
 
 class SelectorItem extends MenuItem {
 	constructor(id, name, options, defaultOption = 0, selectCallback) {
@@ -127,4 +147,4 @@ class EditItem extends MenuItem {
 		return this.text;
 	}
 }
-export {MenuItem,SliderItem,SelectorItem,MenuTypes};
+export {MenuItem,AudioItem,SliderItem,SelectorItem,MenuTypes};

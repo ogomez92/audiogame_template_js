@@ -1,31 +1,32 @@
 'use strict';
 import $ from 'jquery';
 import {KeyEvent} from './keycodes';
-import {son} from './sonoObject';
+import {so} from './soundObject';
 import {speech} from './tts';
-	if (runningText == undefined) {
+
+if (runningText == undefined) {
 	var runningText = 0;
 }
 class ScrollingText {
 	constructor(text, delimiter = '\n', callback = 0) {
-			this.callback = callback;
-		
+		this.callback = callback;
+
 		this.text = text;
 		this.delimiter = delimiter;
 		this.splitText = this.text.split(delimiter);
 		this.currentLine = 0;
-		this.sndOpen = son.create('ui/textOpen');
-		this.sndContinue = son.create('ui/textScroll');
-		this.sndClose = son.create('ui/textClose');
+		this.sndOpen = so.create('ui/textOpen');
+		this.sndContinue = so.create('ui/textScroll');
+		this.sndClose = so.create('ui/textClose');
 		const id = document.getElementById('touchArea');
 		// This.hammer = new Hammer(id);
 		this.init();
-		if (this.callback==0) {
-				return this.prom=new Promise((resolve,reject)=> { 
-				this.res=resolve;
-		});
-				}
+		if (this.callback == 0) {
+			return this.prom = new Promise(resolve => {
+					this.res = resolve;
+					});
 		}
+	}
 
 	init() {
 		const that = this;
@@ -63,16 +64,15 @@ class ScrollingText {
 	}
 
 	readCurrentLine() {
-	if (this.splitText[this.currentLine][0]=="!") {
-	let str=this.splitText[this.currentLine].substr(1);
-	let snd=son.create(str,true);
-	snd.play();
-	snd.sound.once("end",()=> {
-	this.advance();
-	});
-		}
-	else {
-		speech.speak(this.splitText[this.currentLine]);
+		if (this.splitText[this.currentLine][0] == '!') {
+			const str = this.splitText[this.currentLine].substr(1);
+			const snd = so.create(str, true);
+			snd.play();
+			snd.sound.once('end', () => {
+					this.advance();
+					});
+		} else {
+			speech.speak(this.splitText[this.currentLine]);
 		}
 	}
 
@@ -86,14 +86,13 @@ class ScrollingText {
 			this.sndClose.unload();
 			this.sndOpen.unload();
 			this.sndContinue.unload();
-document.removeEventListener('keydown', this.handleKeys);
-//			This.hammer.unload();
-if (this.callback != 0) {
-this.callback();
-}
-else {
-this.res();
-}
+			document.removeEventListener('keydown', this.handleKeys);
+			//			This.hammer.unload();
+			if (this.callback != 0) {
+				this.callback();
+			} else {
+				this.res();
+			}
 		}
 	}
 }
