@@ -1,4 +1,4 @@
-import {Howl, Howler, Spatial} from './howler';
+import {Howl, Howler, Spatial} from 'howler';
 import {KeyboardInput} from './input';
 import {KeyEvent} from './keycodes';
 import {utils} from './utilities';
@@ -9,6 +9,7 @@ class SoundObjectItem {
 	constructor(file, callback = 0, tag = 0, stream = false) {
 		const that = this;
 		this.fileName = file;
+		try {
 		this.sound = new Howl({
 src: file,
 html5: stream,
@@ -16,6 +17,9 @@ onload() {
 that.doneLoading();
 }
 });
+		} catch(err) {
+			console.log("error creating sound "+err.message);
+		}
 this.timeout = setTimeout(() => {
 		that.checkProgress();
 		}, 2000);

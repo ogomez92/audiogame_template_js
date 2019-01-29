@@ -41,6 +41,7 @@ selectVoice:"%1 voices available, use the up and down arrows to select a voice, 
 		};
 		this.strings[2] = {
 			// New Spanish
+			
 		};
 	}
 

@@ -1,11 +1,12 @@
 'use strict';
 class OldTimer {
-	constructor() {
+	constructor(run=true) {
 		this.elapsed;
-		this.paused = false;
+		if (run) this.paused=false;
+		if (!run) this.paused=true;
 		this.lastTime = 0;
 		this.pauseWhen = 0;
-		this.started = true;
+		this.started = run;
 	}
 
 	isActive() {
