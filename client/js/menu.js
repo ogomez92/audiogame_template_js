@@ -84,6 +84,9 @@ class Menu {
 					}
 			}		
 			this.menuData[this.cursor].speak();
+			if (typeof this.moveCallback!=="undefined") {
+				this.moveCallback(this.menuData[this.cursor].id);
+			}
 		}
 	
 		increase() {
