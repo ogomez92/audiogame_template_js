@@ -39,7 +39,8 @@ class NumberSpeaker {
 				this.word_list=english_words.split(" ");
 				if (the_number<0) this.word_list.unshift("minus");
 							this.has_number=true;
-								if (!this.and || this.and && the_number>199) {
+								if (!this.and) {
+									speech.speak(this.and);
 									for (let i=0;i<this.word_list.length;i++) {
 										if (this.word_list[i]=="and") {
 											this.word_list.splice(i,1);
@@ -60,7 +61,7 @@ class NumberSpeaker {
 			// First we do some checks to see if the number is still being spoken.
 			if(this.has_number==false)
 			{
-				if(this.sound!=null) {
+								if(this.sound!=null) {
 					if(this.sound.playing==false && this.sound.sound.state()!="loading")
 					{
 												this.sound.destroy();
@@ -68,20 +69,14 @@ class NumberSpeaker {
 					}
 					else
 					{
-						this.sound.sound.once("end",()=> {
-								this.speak_next();
-								});
 						return 1;
 					}
 				}
 				return -1;
 			}
-			if (this.sound!=null) {
-				if(this.sound.playing==true)
+if (this.sound!=null) {
+if(this.sound.playing==true || this.sound.sound.state()=="loading")
 				{
-					this.sound.sound.once("end",()=> {
-							this.speak_next();
-							});
 					return 1;
 				}
 			}
