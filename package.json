@@ -24,7 +24,7 @@
     "parcel-bundler": "^1.11.0",
     "s": "^0.1.1",
     "sono": "^2.1.6",
-    "speak-tts": "^2.0.6",
+    "speak-tts": "^2.0.8",
     "unique-random": "^2.0.0"
   }
 }
