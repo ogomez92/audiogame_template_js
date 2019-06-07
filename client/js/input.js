@@ -16,16 +16,21 @@ class KeyboardInput {
 		// 		$(document).keydown(function(event) { that.handleKeyDown(event); });
 		// 		$(document).keyup(function(event) { that.handleKeyUp(event); });
 		document.addEventListener('keydown', event => {
-				that.handleKeyDown(event);
-				});
+			that.handleKeyDown(event);
+		});
 		document.addEventListener('keyup', event => {
-				that.handleKeyUp(event);
-				});
+			that.handleKeyUp(event);
+		});
 		document.addEventListener('keypress', event => {
-				that.handleChar(event);
-				});
+			that.handleChar(event);
+		});
 	}
-
+pause() {
+	this.isPaused=true;
+}
+resume() {
+this.isPaused=false;	
+}
 	handleKeyDown(event) {
 		if (this.keyDown[event.which] != true || typeof this.keyDown[event.which] === 'undefined') {
 			this.keyDown[event.which] = true;
@@ -57,15 +62,17 @@ class KeyboardInput {
 		}
 		this.chars = '';
 	}
-	destroy() {
-		this.charEventCallback = null;
-		this.justPressedEventCallback=null;
-	}
+destroy() {
+	this.charEventCallback = null;
+	this.justPressedEventCallback=null;
+}
 	isDown(event) {
+		if (this.isPaused) return false;
 		return this.keyDown[event];
 	}
 
 	isJustPressed(event) {
+		if (this.isPaused) return false;
 		if (this.justPressed[event] == true) {
 			this.justPressed[event] = false;
 			return true;
@@ -84,10 +91,10 @@ class KeyboardInput {
 	keysDown() {
 		const kd = [];
 		this.keyDown.forEach((v, i) => {
-				if (v) {
+			if (v) {
 				kd.push(i);
-				}
-				});
+			}
+		});
 		return kd;
 	}
 
@@ -100,10 +107,10 @@ class KeyboardInput {
 	keysPressed() {
 		const kd = [];
 		this.justPressed.forEach((v, i) => {
-				if (v) {
+			if (v) {
 				kd.push(i);
-				}
-				});
+			}
+		});
 		this.justPressed.splice();
 		return kd;
 	}
@@ -115,10 +122,10 @@ class KeyboardInput {
 	keysReleased() {
 		const kd = [];
 		this.justReleased.forEach((v, i) => {
-				if (v) {
+			if (v) {
 				kd.push(i);
-				}
-				});
+			}
+		});
 		this.justReleased.splice();
 		return kd;
 	}

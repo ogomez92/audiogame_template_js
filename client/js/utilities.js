@@ -1,5 +1,16 @@
+import "babel-polyfill";
 'use strict';
 class GameUtils {
+calculateDelta(lx,sx,sr=0) {
+sx=sx+sr;
+if (sx < lx) {
+			delta = lx - sx;
+			}
+					if (sx > lx) {
+			delta = sx - lx;
+}
+		
+}
 	progressPan(current, max) {
 		return ((current * 200 / max) - 100) / 100;
 	}
@@ -12,6 +23,7 @@ class GameUtils {
 		if (current > max) {
 			return 0;
 		}
+
 		return (current / (min + max)) * (maxVolume - minVolume) + minVolume;
 	}
 
@@ -19,6 +31,7 @@ class GameUtils {
 		if (current > max) {
 			return 0;
 		}
+
 		return (current / (min + max)) * (maxVolume - minVolume) + minVolume;
 	}
 
@@ -71,9 +84,11 @@ class GameUtils {
 		if (arr.length < startIndex) {
 			return -1;
 		}
+
 		for (let i = startIndex; i < arr.length; i++) {
 			val += arr[i];
 		}
+
 		average = val / (len - startIndex);
 		return average;
 	}
@@ -85,9 +100,11 @@ class GameUtils {
 		if (arr.length < startIndex) {
 			return -1;
 		}
+
 		for (let i = startIndex; i < arr.length; i++) {
 			val += arr[i];
 		}
+
 		average = val / (len - startIndex);
 		return Math.floor(average);
 	}
@@ -105,6 +122,7 @@ class GameUtils {
 			const j = Math.floor(Math.random() * (i + 1));
 			[a[i], a[j]] = [a[j], a[i]];
 		}
+
 		return a;
 	}
 
@@ -117,7 +135,11 @@ class GameUtils {
 				size++;
 			}
 		}
+
 		return size;
+	}
+	copyObject(obj) {
+return Object.assign( Object.create( Object.getPrototypeOf(obj)), obj);
 	}
 }
 export var utils = new GameUtils();

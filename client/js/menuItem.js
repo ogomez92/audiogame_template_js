@@ -11,7 +11,7 @@ const MenuTypes = {
 class MenuItem {
 	constructor(id, name) {
 		this.name = name;
-			this.id = id;
+					this.id = id;
 			this.type = MenuTypes.NORMAL;
 	}
 	

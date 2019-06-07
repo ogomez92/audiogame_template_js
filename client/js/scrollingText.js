@@ -1,9 +1,10 @@
+import "babel-polyfill";
 'use strict';
 import $ from 'jquery';
 import {KeyEvent} from './keycodes';
 import {so} from './soundObject';
 import {speech} from './tts';
-
+import copy from 'copy-to-clipboard';
 if (runningText == undefined) {
 	var runningText = 0;
 }
@@ -47,6 +48,9 @@ class ScrollingText {
 			case KeyEvent.DOM_VK_RIGHT:
 				runningText.readCurrentLine();
 				break;
+				case KeyEvent.DOM_VK_C:
+				runningText.copyCurrentLine();
+				break;
 			case KeyEvent.DOM_VK_RETURN:
 				runningText.advance();
 				break;
@@ -75,6 +79,10 @@ class ScrollingText {
 			speech.speak(this.splitText[this.currentLine]);
 		}
 	}
+copyCurrentLine() {
+			copy(this.splitText[this.currentLine]);	
+			this.advance();
+}
 
 	advance() {
 		if (this.currentLine < this.splitText.length - 1) {

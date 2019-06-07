@@ -1,3 +1,4 @@
+import "babel-polyfill";
 import {Howl, Howler, Spatial} from 'howler';
 import {KeyboardInput} from './input';
 import {KeyEvent} from './keycodes';
@@ -7,168 +8,192 @@ const isElectron = true;
 let playOnceTimer;
 class SoundObjectItem {
 	constructor(file, callback = 0, tag = 0, stream = false) {
+		this.duckingFirstTime=true;
 		const that = this;
 		this.fileName = file;
 		try {
-		this.sound = new Howl({
-src: file,
-html5: stream,
-onload() {
-that.doneLoading();
-}
-});
-		} catch(err) {
-			console.log("error creating sound "+err.message);
-		}
-this.timeout = setTimeout(() => {
-		that.checkProgress();
-		}, 2000);
-this.loaded = false;
-this.callback = callback;
-this.timeToLoad = performance.now();
-this.tag = tag;
-}
-
-checkProgress() {
-	if (this.sound.state() == 'loaded') {
-		this.doneLoading();
-	} else {
-		const that = this;
-		this.timeout = setTimeout(() => {
-				that.checkProgress();
-				}, 500);
-	}
-}
-
-doneLoading() {
-	clearTimeout(this.timeout);
-	this.loaded = true;
-	if (this.callback != 0) {
-		this.callback();
-	}
-}
-
-play() {
-	this.sound.play();
-}
-splay() {
-	this.sound.stop();
-	this.sound.play();
-}
-
-playSync() {
-	const inp = new KeyboardInput();
-	inp.init();
-	this.sound.play();
-	inp.justPressedEventCallback = (evt => {
-			if (evt == KeyEvent.DOM_VK_Q || evt == KeyEvent.DOM_VK_X) {
-			this.sound.stop();
-			inp.justPressedEventCallback = null;
-			}
+			this.sound = new Howl({
+				src: file,
+				html5: stream,
+				onload() {
+					that.doneLoading();
+				}
 			});
-	return new Promise(resolve => {
+		} catch (error) {
+			console.log('error creating sound ' + error.message);
+		}
+
+		this.timeout = setTimeout(() => {
+			that.checkProgress();
+		}, 2000);
+		this.loaded = false;
+		this.callback = callback;
+		this.timeToLoad = performance.now();
+		this.tag = tag;
+	}
+
+	checkProgress() {
+		if (this.sound.state() == 'loaded') {
+			this.doneLoading();
+		} else {
+			const that = this;
+			this.timeout = setTimeout(() => {
+				that.checkProgress();
+			}, 500);
+		}
+	}
+	duck(time) {
+		if (this.duckingFirstTime) this.oldVolume=this.volume;
+		this.duckingFirstTime=false;
+		this.sound.fade(this.volume,0.3,200);
+					}
+					unduck(time) {
+
+						this.sound.fade(this.volume,this.oldVolume,200);
+									}
+
+	async fade(time) {
+		this.sound.fade(this.volume,0,time);
+		return new Promise(resolve => {
+			this.sound.once('fade', () => {
+				this.sound.stop();
+				resolve('ok');
+			});// End
+					});// Promise
+
+	}
+	doneLoading() {
+		clearTimeout(this.timeout);
+		this.loaded = true;
+		if (this.callback != 0) {
+			this.callback();
+		}
+	}
+
+	play() {
+		this.sound.play();
+	}
+
+	forcePlay() {
+		this.sound.stop();
+		this.sound.play();
+	}
+
+	playSync() {
+		const inp = new KeyboardInput();
+		inp.init();
+		this.sound.play();
+		inp.justPressedEventCallback = (evt => {
+			if (evt == KeyEvent.DOM_VK_Q || evt == KeyEvent.DOM_VK_X) {
+				this.sound.stop();
+				inp.justPressedEventCallback = null;
+			}
+		});
+		return new Promise(resolve => {
 			this.sound.once('end', () => {
-					resolve('ok');
-					inp.justPressedEventCallback = null;
-					});// End
+				resolve('ok');
+				inp.justPressedEventCallback = null;
+			});// End
 			this.sound.once('stop', () => {
-					resolve('ok');
-					inp.justPressedEventCallback = null;
-					});// Stop
-			});// Promise
-}
-
-stop() {
-	this.sound.stop();
-}
-
-pause() {
-	this.sound.pause();
-}
-
-destroy() {
-	this.sound.unload();
-}
-
-unload() {
-	this.sound.unload();
-}
-
-get volume() {
-	return this.sound.volume();
-}
-
-set volume(v) {
-	return this.sound.volume(v);
-}
-
-get pan() {
-	return this.sound.stereo();
-}
-
-set pan(v) {
-	return this.sound.stereo(v);
-}
-
-set loop(v) {
-	return this.sound.loop(v);
-}
-
-get active() {
-	if (this.sound.state() == 'unloaded') {
-		return false;
+				resolve('ok');
+				inp.justPressedEventCallback = null;
+			});// Stop
+		});// Promise
 	}
-	if (this.sound.state() == 'loaded') {
-		return true;
+
+	stop() {
+		this.sound.stop();
 	}
-	if (this.sound.state() == 'loading') {
-		return true;
+
+	pause() {
+		this.sound.pause();
 	}
-}
 
-get loop() {
-	return this.sound.loop();
-}
+	destroy() {
+		this.sound.unload();
+	}
 
-get playing() {
-	return this.sound.playing();
-}
+	unload() {
+		this.sound.unload();
+	}
 
-get playbackRate() {
-	return this.sound.rate();
-}
+	get volume() {
+		return this.sound.volume();
+	}
 
-set playbackRate(v) {
-	return this.sound.rate(v);
-}
+	set volume(v) {
+		return this.sound.volume(v);
+	}
 
-get pitch() {
-	return this.sound.rate();
-}
+	get pan() {
+		return this.sound.stereo();
+	}
 
-set pitch(v) {
-	return this.sound.rate(v);
-}
+	set pan(v) {
+		return this.sound.stereo(v);
+	}
 
-get currentTime() {
-	return this.sound.seek();
-}
+	set loop(v) {
+		return this.sound.loop(v);
+	}
 
-get duration() {
-	return this.sound.duration() * 1000;
-}
+	get active() {
+		if (this.sound.state() == 'unloaded') {
+			return false;
+		}
 
-get position() {
-	return this.sound.seek();
-}
+		if (this.sound.state() == 'loaded') {
+			return true;
+		}
 
-set currentTime(v) {
-	return this.sound.seek(v);
-}
+		if (this.sound.state() == 'loading') {
+			return true;
+		}
+	}
 
-seek(time) {
-	return this.sound.seek(time);
-}
+	get loop() {
+		return this.sound.loop();
+	}
+
+	get playing() {
+		return this.sound.playing();
+	}
+
+	get playbackRate() {
+		return this.sound.rate();
+	}
+
+	set playbackRate(v) {
+		return this.sound.rate(v);
+	}
+
+	get pitch() {
+		return this.sound.rate();
+	}
+
+	set pitch(v) {
+		return this.sound.rate(v);
+	}
+
+	get currentTime() {
+		return this.sound.seek();
+	}
+
+	get duration() {
+		return this.sound.duration() * 1000;
+	}
+
+	get position() {
+		return this.sound.seek();
+	}
+
+	set currentTime(v) {
+		return this.sound.seek(v);
+	}
+
+	seek(time) {
+		return this.sound.seek(time);
+	}
 }
 class SoundObject {
 	constructor() {
@@ -205,6 +230,7 @@ class SoundObject {
 				return this.sounds[i];
 			}
 		}
+
 		return -1;
 	}
 
@@ -214,6 +240,7 @@ class SoundObject {
 				return i;
 			}
 		}
+
 		return -1;
 	}
 
@@ -243,12 +270,13 @@ class SoundObject {
 		const that = this;
 		try {
 			returnObject = new SoundObjectItem(file, (() => {
-						that.doneLoading();
-						}), 0, stream);
+				that.doneLoading();
+			}), 0, stream);
 			this.sounds.push(returnObject);
-		} catch(err) {
-			console.log("Error loading sound: "+err.message);
+		} catch (error) {
+			console.log('Error loading sound: ' + error.message);
 		}
+
 		return returnObject;
 	}
 
@@ -279,17 +307,19 @@ class SoundObject {
 			if (typeof this.statusCallback !== 'undefined' && this.statusCallback != null) {
 				this.statusCallback(1 - this.queue.length / this.queueLength);
 			}
+
 			if (this.findSound(this.queue[0]) != -1) {
 				this.queue.splice(0, 1);
 				this.handleQueue();
 				return;
 			}
+
 			console.log(this.queue[0]);
 			try {
 				this.sounds.push(new SoundObjectItem(this.queue[0], (() => {
-								that.handleQueue();
-								}), 1));
-			} catch (err) {
+					that.handleQueue();
+				}), 1));
+			} catch (error) {
 				console.log('error');
 			} finally {
 				this.queue.splice(0, 1);
@@ -341,18 +371,19 @@ class SoundObject {
 		const toDestroy = new Array();
 		const that = this;
 		this.oneShotSound.on('ended', () => {
-				for (var i = 0; i < that.oneShots.length; i++) {
+			for (var i = 0; i < that.oneShots.length; i++) {
 				if (that.oneShots[i].playing == false) {
-				that.oneShots[i].unload();
-				toDestroy.push(i);
+					that.oneShots[i].unload();
+					toDestroy.push(i);
 				}
-				}
-				for (var i = 0; i < toDestroy.length; i++) {
+			}
+
+			for (var i = 0; i < toDestroy.length; i++) {
 				if (that.oneShotSounds[i].playing == false) {
-				that.oneShotSounds.splice(toDestroy[i], 1);
+					that.oneShotSounds.splice(toDestroy[i], 1);
 				}
-				}
-				});
+			}
+		});
 	}
 
 	destroy(file, callback = 0) {
@@ -367,6 +398,7 @@ class SoundObject {
 				this.sounds.splice(found, 1);
 			}
 		}
+
 		if (callback != 0) {
 			callback();
 		}
@@ -376,6 +408,7 @@ class SoundObject {
 		while (this.sounds.length > 0) {
 			this.sounds.splice(0, 1);
 		}
+
 		Howler.unload();
 		if (callback != 0) {
 			callback();

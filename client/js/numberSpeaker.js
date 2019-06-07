@@ -1,8 +1,9 @@
 import {utils} from './utilities';
+import "babel-polyfill";
 import {speech} from './tts';
 var fs=require('fs');
 import {so} from './soundObject';
-class NumberSpeaker {
+ class NumberSpeaker {
 	constructor()
 	{
 		this.ntw=require('number-words');
@@ -32,6 +33,8 @@ class NumberSpeaker {
 							// Convert our number to English words, and then split it up by space.
 				let english_words=this.ntw.convert(Math.abs(the_number));
 				if (the_number==0) english_words="zero";
+				console.log(english_words);
+
 				if(english_words=="")
 				{
 					return -1;
@@ -40,7 +43,7 @@ class NumberSpeaker {
 				if (the_number<0) this.word_list.unshift("minus");
 							this.has_number=true;
 								if (!this.and) {
-									speech.speak(this.and);
+
 									for (let i=0;i<this.word_list.length;i++) {
 										if (this.word_list[i]=="and") {
 											this.word_list.splice(i,1);
@@ -98,6 +101,7 @@ if(this.sound.playing==true || this.sound.sound.state()=="loading")
 							}
 						}
 						// Now we have a filename to test, let's see if it loads.
+						console.log(assembled_filename);
 						if (!fs.existsSync(__dirname+"/sounds/"+assembled_filename+so.extension)) {
 							// It didn't, so we remove the last entry from our current search.
 							look_until-=1;

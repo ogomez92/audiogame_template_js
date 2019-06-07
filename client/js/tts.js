@@ -1,3 +1,4 @@
+import "babel-polyfill";
 'use strict';
 import {strings} from './strings';
 import {utils} from './utilities'
@@ -7,7 +8,9 @@ import {KeyEvent} from './keycodes';
 const useWebTTS = true;
 import Speech from 'speak-tts' // es6
 class TTS {
-	constructor(webTTS = false) {
+	constructor(webTTS = true) {
+		this.ducking=false;
+
 		if (lang==1) this.lang="en-us";
 		if (lang==2) this.lang="es-es";
 		this.webTTS = webTTS;
@@ -44,6 +47,14 @@ queue(text) {
 		this.synth.speak({
 text:text,
 queue:true,
+listeners:{
+	onstart: () => {
+this.duck();
+	},
+	onend: () => {
+		this.unduck();
+	},
+},
 })
 }
 else {
@@ -59,6 +70,15 @@ speak(text) {
 		this.synth.speak({
 text:text,
 queue:false,
+listeners:{
+	onstart: () => {
+this.duck();
+	},
+	onend: () => {
+		this.unduck();
+	},
+}
+
 })
 }
 else {
@@ -147,9 +167,19 @@ setVoice(cb) {
 	});//callback
 
 }//function
-} // End class
-const speech = new TTS(false);
-if (process.platform == 'darwin') {
-	speech.webTTS = true;
+duck() {
+	if (this.ducking) return;
+	this.ducking=true;
+	if (typeof this.ducker!=="undefined") this.ducker.duck();
 }
+unduck() {
+	this.ducking=false;
+	if (typeof this.ducker!=="undefined") this.ducker.unduck();
+}
+
+} // End class
+const speech = new TTS(true);
+//if (process.platform == 'darwin') {
+//	speech.webTTS = true;
+//}
 export {TTS, speech};

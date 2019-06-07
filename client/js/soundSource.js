@@ -1,6 +1,6 @@
 'use strict';
 
-import {Howl, Howler} from './howler';
+import {Howl, Howler} from 'howler';
 import {so} from './soundObject.js';
 
 // Meow.panner.defaults= {
