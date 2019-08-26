@@ -1,86 +1,58 @@
 'use strict';
-
-import {Howl, Howler} from 'howler';
-import {so} from './soundObject.js';
-
-// Meow.panner.defaults= {
-//     panningModel:'HRTF',
-// 	maxDistance:2000
-//
-//
-// };
-
-class SoundSource {
-	constructor(file, x = 0, y = 0, z = 0, loop = true) {
+import sono from 'sono';
+import {so} from './soundObject';
+import panner from 'sono/effects/panner';
+    panner.defaults= {
+panningModel:'HRTF',
+maxDistance:50,
+};
+/** Simple wrapper for agk-soundobject to quickly create 3D sound sources.
+* @constructor
+	* @param {string} file - the path to the file without base directory and extension.
+	* @param {number} x - Initial X coordinate of the sound
+	* @param {number} y - Initial Y coordinate of the sound
+	* @param {number} z - Initial Z coordinate of the sound
+	* @param {boolean} loop - True if the sound should loop
+	* @return {object} A Sound Source object
+*/
+export class SoundSource {
+	constructor(file, x = 0, y = 0, z = 0) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.loop = loop;
-		this.sound = so.create(file);
-
-		this.sound.loop = loop;
-		this.sound.pos(this.x, this.y, this.z);
+				this.sound = son.create(file);
+				this.pan = this.sound.effects.add(panner());
+		this.pos(this.x, this.y, this.z);
 		this.rate = 1;
 		this.speed = 0;
 		this.minRate = 0.8;
 		this.maxRate = 1.2;
 		this.toDestroy = false;
 		this.rateShiftSpeed = 0.015;
-		// This.sound.currentPosition = getRandomArbitrary(0, this.sound.duration);
 		this.sound.currentPosition = 0;
 	}
-
+	set loop(v) {
+	this.sound.loop=v;
+	}
+	/** Plays the sound source */
 	play() {
 		// This.sound.seek(0);
 		this.sound.play();
 	}
 
+	/** Positions the sound source in 3D space.
+	* @param {number} x - The new X coordinate of the sound
+	* @param {number} y - The new Y coordinate of the sound
+	* @param {number} z - The new Z coordinate of the sound
+*/
 	pos(x, y, z) {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-		this.sound.pos(this.x, this.y, this.z);
-	}
-
-	update() {
-
-	}
-
-	setDoppler(z1, speed, direction) {
-		if (speed >= 0) {
-			if (direction == -1) {
-				speed += this.speed;
-				// This.rate = 1+Math.sin(((speed/10000)*(this.z-z1)));
-				var freq = 44100 * (1 - (speed / 240));
-				this.rate = freq / 44100;
-			} else {
-				speed += this.speed;
-				// This.rate = 1-Math.sin(((speed/10000)*(z1-this.z)));
-				var freq = 44100 / (1 - (speed / 240));
-				this.rate = freq / 44100;
+		this.pan.setPosition(x, y, z);
 			}
-		} else {
-			this.rate = 1;
-		}
 
-		// If (this.rate > this.maxRate) this.rate = this.maxRate;
-		// if (this.rate < this.minRate) this.rate = this.minRate;
-		// this.sound.playbackRate = this.rate;
-		if (this.rate > this.sound.playbackRate + this.rateShiftSpeed) {
-			this.sound.playbackRate += this.rateShiftSpeed;
-		} else if (this.rate < this.sound.playbackRate - this.rateShiftSpeed) {
-			this.sound.playbackRate -= this.rateShiftSpeed;
-		}
-	}
-
-	setSpeed(speed) {
-		this.speed = speed;
-	}
-
-	destroy() {
-		this.sound.unload();
-		this.toDestroy = true;
+	/** Empty update method */
+	update() {
 	}
 }
-
-export {SoundSource};

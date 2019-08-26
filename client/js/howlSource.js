@@ -1,6 +1,14 @@
 'use strict';
 
+import {Howl, Howler} from 'howler';
 import {so} from './soundObject.js';
+
+// Meow.panner.defaults= {
+//     panningModel:'HRTF',
+// 	maxDistance:2000
+//
+//
+// };
 
 class SoundSource {
 	constructor(file, x = 0, y = 0, z = 0, loop = true) {

@@ -25,12 +25,13 @@ this.buttons[i].addEventListener('click', () => {
 });
 this.buttons[i].addEventListener('focus', () => { 
 	this.sound.stop();
-	speech.speak(this.langs[i])
+	speech.setLanguage(i);
+	speech.speak(this.langs[i]);
 });
 this.container.appendChild(this.buttons[i]);
 				}
 		this.id.appendChild(this.container);
-		this.sound=so.create("ui/lang_select");
+		this.sound=so.create("ui/langSelect");
 		this.sound.play();
 	}
 }
