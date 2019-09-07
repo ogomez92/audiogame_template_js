@@ -1,8 +1,9 @@
 import $ from 'jquery';
-
+const EventEmitter = require('events');
 'use strict';
-class KeyboardInput {
+class KeyboardInput extends EventEmitter {
 	constructor() {
+super();
 		this.keyDown = [];
 		this.justPressed = [];
 		this.chars = [];
@@ -35,6 +36,7 @@ this.isPaused=false;
 		if (this.keyDown[event.which] != true || typeof this.keyDown[event.which] === 'undefined') {
 			this.keyDown[event.which] = true;
 			this.justPressed[event.which] = true;
+this.emit(event.which);
 			this.justReleased[event.which] = false;
 			if (typeof this.justPressedEventCallback !== 'undefined' && this.justPressedEventCallback != null) {
 				this.justPressedEventCallback(event.which);
@@ -48,6 +50,7 @@ this.isPaused=false;
 		}
 		if (String.fromCharCode(char.which) != '') {
 			this.chars += String.fromCharCode(char.which);
+this.emit("chr"+String.fromCharCode(char.which));
 			if (typeof this.charEventCallback !== 'undefined' && this.charEventCallback != null) {
 				this.charEventCallback(String.fromCharCode(char.which));
 			}
@@ -59,6 +62,7 @@ this.isPaused=false;
 			this.keyDown[event.which] = false;
 			this.justPressed[event.which] = false;
 			this.justReleased[event.which] = true;
+this.emit("!"+event.which);
 		}
 		this.chars = '';
 	}

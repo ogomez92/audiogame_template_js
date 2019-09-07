@@ -152,5 +152,14 @@ arraysEqual(arr1, arr2) {
     return true;
 }
 
+pauseTimeout(timerId) {
+let start=Date.now();
+clearTimeout(timerId);
+    };
+
+resumeTimeout(timerId) {
+        remaining -= Date.now() - start;
+return window.setTimeout(callback, remaining);
+    };
 }
 export var utils = new GameUtils();

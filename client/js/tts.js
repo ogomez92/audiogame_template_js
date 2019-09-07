@@ -22,7 +22,7 @@ rate:this.rate,
 splitSentences:false,
 })
 .then((data) => {
-		this.voices=data.voices;
+		//this.voices=data.voices;
 		}).catch(e => {
 			console.error("An error occured while initializing : ", e)
 			})
@@ -32,6 +32,7 @@ setLanguage(lang) {
 	if (lang==1) this.lang="en-us";
 	if (lang==2) this.lang="es-es";
 	this.synth.setLanguage(this.lang)
+	//this.setVoice(null,true);
 }
 setRate(r) {
 	let newRate=r;
@@ -41,12 +42,17 @@ setRate(r) {
 		this.rate=newRate;
 	this.synth.setRate(newRate);
 }
-queue(text) {
-	if (this.webTTS) {
+speak(text,queue=false) {
 
+	if (this.webTTS) {
+try {
+	if (typeof text=="number") {
+		text=text+".";
+		//we need this because some voices fail to process numbers. Why? Don't ask me.
+	}
 		this.synth.speak({
 text:text,
-queue:true,
+queue:queue,
 listeners:{
 	onstart: () => {
 this.duck();
@@ -54,32 +60,16 @@ this.duck();
 	onend: () => {
 		this.unduck();
 	},
-},
-})
-}
-else {
-	document.getElementById('speech').innerHTML = '';
-	const para = document.createElement('p');
-	para.appendChild(document.createTextNode(text));
-	document.getElementById('speech').appendChild(para);
-}
-} // End speak()
-
-speak(text) {
-	if (this.webTTS) {
-		this.synth.speak({
-text:text,
-queue:false,
-listeners:{
-	onstart: () => {
-this.duck();
-	},
-	onend: () => {
-		this.unduck();
+	onerror: (err) => {
+console.log("meow");
+//this.setVoice(null,true);
+return false;
 	},
 }
-
 })
+} catch {
+}
+
 }
 else {
 	document.getElementById('speech').innerHTML = '';
@@ -121,7 +111,7 @@ async changeRate() {
 	}
 }
 
-setVoice(cb) {
+setVoice(cb,silent=false) {
 	//what language do we want?
 	let wl="en";
 	if (lang==1) wl="en";
@@ -135,10 +125,11 @@ setVoice(cb) {
 					voiceArray.push(this.voices[k].name)
 				}
 		}
-	speech.speak(strings.get("selectVoice",[voiceArray.length]));
+	if (!silent) speech.speak(strings.get("selectVoice",[voiceArray.length]));
 	let input=new KeyboardInput()
 		let selection=-1;
 	input.init();
+if (!silent) {
 	input.justPressedEventCallback=((key)=> {
 			if (key==KeyEvent.DOM_VK_DOWN) {
 			selection++;
@@ -165,7 +156,17 @@ setVoice(cb) {
 			}
 			}//enter action
 	});//callback
-
+} //not silent
+else {
+try {
+this.synth.setVoice(voiceArray[0]);
+return voiceArray[0];
+} catch(err) {
+console.log("Can't find suitable voices."+err.message);
+this.synth.setVoice(voiceArray[1]);
+return voiceArray[1];
+} // catch block
+}//else
 }//function
 duck() {
 	if (this.ducking) return;
