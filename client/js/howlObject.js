@@ -1,37 +1,60 @@
 import "babel-polyfill";
-import {Howl, Howler, Spatial} from 'howler';
-import {KeyboardInput} from './input';
-import {KeyEvent} from './keycodes';
-import {utils} from './utilities';
+import { Howl, Howler, Spatial } from 'howler';
+import { KeyboardInput } from './input';
+import { KeyEvent } from './keycodes';
+import { utils } from './utilities';
 
 const isElectron = true;
 let playOnceTimer;
 class SoundObjectItem {
 	constructor(file, callback = 0, tag = 0, stream = false) {
-		this.duckingFirstTime=true;
+		this.duckingFirstTime = true;
 		const that = this;
 		this.fileName = file;
-		try {
-			this.sound = new Howl({
-				src: file,
-				html5: stream,
-				onload() {
-					that.doneLoading();
-				}
-			});
-		} catch (error) {
-			console.log('error creating sound ' + error.message);
+		if (!stream) {
+			try {
+				this.sound = new Howl({
+					src: file,
+					html5: false,
+					onload() {
+						that.doneLoading();
+					}
+				});
+			} catch (error) {
+				console.log('error creating sound ' + error.message);
+			}
 		}
+		if (stream) {
+			console.log("streaming sound");
+			try {
+				var sound = new Audio();
+				sound.src = file;
+				sound.controls = false;
+				sound.autoplay = false;
+				var context = new AudioContext();
+				var source = context.createMediaElementSource(sound);
+				this.sound = new Howl({
+					src: [],
+					onload() {
+						that.doneLoading();
+					}
+				});
+				source.connect(this.sound.ctx);
+			} catch (error) {
+				console.log('error creating sound ' + error.message);
+			}
 
-		this.timeout = setTimeout(() => {
-			that.checkProgress();
-		}, 2000);
-		this.loaded = false;
-		this.callback = callback;
-		this.timeToLoad = performance.now();
-		this.tag = tag;
+		}//stream
+		if (!stream) {
+			this.timeout = setTimeout(() => {
+				that.checkProgress();
+			}, 2000);
+			this.loaded = false;
+			this.callback = callback;
+			this.timeToLoad = performance.now();
+			this.tag = tag;
+		}
 	}
-
 	checkProgress() {
 		if (this.sound.state() == 'loaded') {
 			this.doneLoading();
@@ -43,23 +66,23 @@ class SoundObjectItem {
 		}
 	}
 	duck(time) {
-		if (this.duckingFirstTime) this.oldVolume=this.volume;
-		this.duckingFirstTime=false;
-		this.sound.fade(this.volume,0.3,200);
-					}
-					unduck(time) {
+		if (this.duckingFirstTime) this.oldVolume = this.volume;
+		this.duckingFirstTime = false;
+		this.sound.fade(this.volume, 0.3, 200);
+	}
+	unduck(time) {
 
-						this.sound.fade(this.volume,this.oldVolume,200);
-									}
+		this.sound.fade(this.volume, this.oldVolume, 200);
+	}
 
 	async fade(time) {
-		this.sound.fade(this.volume,0,time);
+		this.sound.fade(this.volume, 0, time);
 		return new Promise(resolve => {
 			this.sound.once('fade', () => {
 				this.sound.stop();
 				resolve('ok');
 			});// End
-					});// Promise
+		});// Promise
 
 	}
 	doneLoading() {
@@ -279,6 +302,21 @@ class SoundObject {
 
 		return returnObject;
 	}
+	stream(file, stream = false) {
+		file = this.directory + file + this.extension;
+		let returnObject = null;
+		const that = this;
+		try {
+			returnObject = new SoundObjectItem(file, (() => {
+				that.doneLoading();
+			}), 0, true);
+		} catch (error) {
+			console.log('Error loading sound: ' + error.message);
+		}
+
+		return returnObject;
+	}
+
 
 	enqueue(file) {
 		file = this.directory + file + this.extension;
@@ -416,4 +454,4 @@ class SoundObject {
 	}
 }
 const so = new SoundObject();
-export {so};
+export { so };

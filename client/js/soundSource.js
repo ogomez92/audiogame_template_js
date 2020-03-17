@@ -1,10 +1,10 @@
 'use strict';
 import sono from 'sono';
-import {so} from './soundObject';
+import { so } from './soundObject';
 import panner from 'sono/effects/panner';
-    panner.defaults= {
-panningModel:'HRTF',
-maxDistance:50,
+panner.defaults = {
+	panningModel: 'HRTF',
+	maxDistance: 50,
 };
 /** Simple wrapper for agk-soundobject to quickly create 3D sound sources.
 * @constructor
@@ -20,8 +20,8 @@ export class SoundSource {
 		this.x = x;
 		this.y = y;
 		this.z = z;
-				this.sound = son.create(file);
-				this.pan = this.sound.effects.add(panner());
+		this.sound = son.create(file);
+		this.pan = this.sound.effects.add(panner());
 		this.pos(this.x, this.y, this.z);
 		this.rate = 1;
 		this.speed = 0;
@@ -32,7 +32,7 @@ export class SoundSource {
 		this.sound.currentPosition = 0;
 	}
 	set loop(v) {
-	this.sound.loop=v;
+		this.sound.loop = v;
 	}
 	/** Plays the sound source */
 	play() {
@@ -50,7 +50,7 @@ export class SoundSource {
 		this.y = y;
 		this.z = z;
 		this.pan.setPosition(x, y, z);
-			}
+	}
 
 	/** Empty update method */
 	update() {

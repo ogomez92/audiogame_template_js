@@ -1,7 +1,7 @@
 'use strict';
 
-import {Howl, Howler} from 'howler';
-import {so} from './soundObject.js';
+import { Howl, Howler } from './howler';
+import { so } from './soundObject.js';
 
 // Meow.panner.defaults= {
 //     panningModel:'HRTF',
@@ -83,4 +83,4 @@ class SoundSource {
 	}
 }
 
-export {SoundSource};
+export { SoundSource };
