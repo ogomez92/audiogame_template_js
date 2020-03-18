@@ -58,7 +58,6 @@ class NumberSpeaker {
 		// First we do some checks to see if the number is still being spoken.
 		if (this.has_number == false) {
 			if (this.sound != null) {
-				console.log("meh",this.sound.sound.progress)
 				if (this.sound.playing == false && this.sound.loaded) {
 					this.sound.destroy();
 					return 0;
@@ -70,7 +69,7 @@ class NumberSpeaker {
 			return -1;
 		}
 		if (this.sound != null) {
-			if (this.sound.playing == true || this.sound.sound.state() == "loading") {
+			if (this.sound.playing == true || !this.sound.loaded) {
 				return 1;
 			}
 		}
