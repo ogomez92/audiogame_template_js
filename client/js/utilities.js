@@ -1,16 +1,16 @@
 import "babel-polyfill";
 'use strict';
 class GameUtils {
-calculateDelta(lx,sx,sr=0) {
-sx=sx+sr;
-if (sx < lx) {
+	calculateDelta(lx, sx, sr = 0) {
+		sx = sx + sr;
+		if (sx < lx) {
 			delta = lx - sx;
-			}
-					if (sx > lx) {
+		}
+		if (sx > lx) {
 			delta = sx - lx;
-}
-		
-}
+		}
+
+	}
 	progressPan(current, max) {
 		return ((current * 200 / max) - 100) / 100;
 	}
@@ -37,8 +37,8 @@ if (sx < lx) {
 
 	distance3D(x1, y1, z1, x2, y2, z2) {
 		return Math.sqrt((x2 - x1) * (x2 - x1) +
-				(y2 - y1) * (y2 - y1) +
-				(z2 - z1) * (z2 - z1));
+			(y2 - y1) * (y2 - y1) +
+			(z2 - z1) * (z2 - z1));
 	}
 
 	distance(jx, jy, kx, ky) {
@@ -75,6 +75,9 @@ if (sx < lx) {
 
 	percentOf(int1, int2) {
 		return int2 * int1 / 100;
+	}
+	percentage(percented, value) {
+		return value * percented / 100;
 	}
 
 	average(arr, startIndex = 0) {
@@ -139,27 +142,31 @@ if (sx < lx) {
 		return size;
 	}
 	copyObject(obj) {
-return Object.assign( Object.create( Object.getPrototypeOf(obj)), obj);
+		return Object.assign(Object.create(Object.getPrototypeOf(obj)), obj);
 	}
-arraysEqual(arr1, arr2) {
-    for (var i = 0; i < arr1.length; i++) {
+	arraysEqual(arr1, arr2) {
+		for (var i = 0; i < arr1.length; i++) {
 
-        if (arr1[i] !== arr2[i])
-            return false;
+			if (arr1[i] !== arr2[i])
+				return false;
 
-    }
+		}
 
-    return true;
-}
+		return true;
+	}
 
-pauseTimeout(timerId) {
-let start=Date.now();
-clearTimeout(timerId);
-    };
+	pauseTimeout(timerId) {
+		let start = Date.now();
+		clearTimeout(timerId);
+	};
 
-resumeTimeout(timerId) {
-        remaining -= Date.now() - start;
-return window.setTimeout(callback, remaining);
-    };
+	resumeTimeout(timerId) {
+		remaining -= Date.now() - start;
+		return window.setTimeout(callback, remaining);
+	};
+	randomProperty(obj) {
+		var keys = Object.keys(obj)
+		return obj[keys[keys.length * Math.random() << 0]];
+	};
 }
 export var utils = new GameUtils();
