@@ -24,6 +24,7 @@ class LanguageSelector {
 			this.buttons[i].type = 'button';
 			this.buttons[i].value = this.langs[i];
 			this.buttons[i].addEventListener('click', () => {
+				this.sound.stop()
 				this.callback(i);
 				this.container.innerHTML = '';
 				this.input.removeAllListeners();
@@ -36,6 +37,7 @@ class LanguageSelector {
 			});
 			this.container.appendChild(this.buttons[i]);
 			this.input.once("chr" + i, () => {
+				this.sound.stop()
 				this.callback(i);
 				this.container.innerHTML = '';
 				this.input.removeAllListeners();
