@@ -97,7 +97,7 @@ class SoundObjectItem extends EventEmitter {
 		try {
 			this.sound.play();
 		} catch (err) {
-//report(err);
+			//report(err);
 			//recreate the sound and replay
 			if (this.stream) this.sound = sono.create(new Audio(this.fileName));
 			if (!this.stream) this.sound = sono.create({
@@ -119,7 +119,7 @@ class SoundObjectItem extends EventEmitter {
 	}
 	destroy() {
 		try {
-		
+
 			this.sound.destroy();
 		} catch (err) {
 
@@ -135,12 +135,12 @@ class SoundObjectItem extends EventEmitter {
 		this.sound.fade(this.oldVolume, 0.15);
 	}
 	async fade(time) {
-		this.sound.fade(0, time/1000);
+		this.sound.fade(0, time / 1000);
 		return new Promise(resolve => {
-			this.sound.once('fade', () => {
+			setTimeout(() => {
 				this.sound.stop();
 				resolve('ok');
-			});// End
+			}, time);// End
 		});// Promise
 
 	}
@@ -159,7 +159,7 @@ class SoundObjectItem extends EventEmitter {
 		this.sound.play();
 
 		inp.justPressedEventCallback = (evt => {
-			if (evt == KeyEvent.DOM_VK_Q || evt == KeyEvent.DOM_VK_X || evt == KeyEvent.DOM_VK_ESCAPE) {
+			if (evt == KeyEvent.DOM_VK_Q || evt == KeyEvent.DOM_VK_X || evt == KeyEvent.DOM_VK_ESCAPE || evt == KeyEvent.DOM_VK_SPACE || evt == KeyEvent.DOM_VK_ENTER) {
 				this.sound.stop();
 				inp.justPressedEventCallback = null;
 			}
@@ -229,7 +229,7 @@ class SoundObjectItem extends EventEmitter {
 	}
 
 	get duration() {
-		return this.sound.duration;
+		return this.sound.duration *1000;
 	}
 
 	get position() {
@@ -315,7 +315,7 @@ class SoundObject {
 			this.sounds.push(returnObject);
 		} else {
 			returnObject = new SoundObjectItem(found.sound.data, () => { if (!stream) this.doneLoading(); }, 0, stream);
-			returnObject.fileName=found.fileName;
+			returnObject.fileName = found.fileName;
 		}
 		returnObject.fileName = file; //otherwise html element fileNames get fucked up.
 		return returnObject;
@@ -352,11 +352,11 @@ class SoundObject {
 			}//stream
 		});// Promise
 	}
-async playSync(file) {
-let snd=await so.createSync(file);
-await snd.playSync();
-snd.destroy();
-}
+	async playSync(file) {
+		let snd = await so.createSync(file);
+		await snd.playSync();
+		snd.destroy();
+	}
 
 	enqueue(file, stream = false) {
 		file = this.directory + file + this.extension;
