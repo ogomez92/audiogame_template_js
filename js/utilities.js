@@ -168,5 +168,28 @@ class GameUtils {
 		var keys = Object.keys(obj)
 		return obj[keys[keys.length * Math.random() << 0]];
 	};
+		async findFiles(path,ext="") {
+let list=[];
+let fileExt="";
+await walk.filesSync(path, (pb, pf, stat, next) => {
+if (ext=="") {
+list.push(pf);
+}
+else {
+fileExt=pf.substr(0-ext.length,ext.length);
+if (fileExt==ext) {
+list.push(pf);
+}
+}
+});
+return list;
+}
+async findFolders(path) {
+let list=[];
+await walk.dirsSync(path, (pb, pf, stat, next) => {
+list.push(pf);
+});
+return list;
+}
 }
 export var utils = new GameUtils();

@@ -2,27 +2,21 @@
   "name": "template",
   "version": "1.0.5",
   "description": "Template",
-  "main": "./client/index.js",
+  "main": "./index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "watch": "parcel watch ./client/js/main.js -d ./client --target=electron --no-hmr",
-    "build": "parcel build ./client/js/main.js -d ./client --target=electron",
-    "start": "electron ./client",
-    "run": "npm run build && electron ./client"
-  },
-  "repository": {
-    "type": "git",
-    "url": "http://oriolgomez.com:9900/ogomez92/beatjs"
+    "watch": "parcel watch ./js/main.js -d . --target=electron --no-hmr",
+    "build": "parcel build ./js/main.js -d . --target=electron",
+    "start": "electron .",
+    "run": "npm run build && electron ."
   },
   "author": "Oriol Gomez",
   "license": "GPL",
   "dependencies": {
     "babel-polyfill": "^6.26.0",
     "copy-to-clipboard": "^3.2.0",
-    "howler": "^2.1.2",
     "http-server": "^0.12.1",
     "jquery": "^3.4.1",
-    "minimist": "^1.2.5",
     "number-words": "^1.1.0",
     "parcel-bundler": "^1.12.4",
     "s": "^0.1.1",
