@@ -92,6 +92,10 @@ class SoundObjectItem extends EventEmitter {
 			this.callback();
 		}
 	}
+	replay() {
+		this.sound.stop()
+		this.sound.play()
+	}
 	play() {
 		//sometimes, html element sounds complain about having a different connection, so wrap it in a try catch block.
 		try {
@@ -229,7 +233,7 @@ class SoundObjectItem extends EventEmitter {
 	}
 
 	get duration() {
-		return this.sound.duration *1000;
+		return this.sound.duration * 1000;
 	}
 
 	get position() {
